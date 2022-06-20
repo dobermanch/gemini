@@ -1,0 +1,33 @@
+﻿@inherits ShapeEditor<Rect>
+
+<g transform="translate(@SVGElement.SVG.Translate.x.AsString() @SVGElement.SVG.Translate.y.AsString()) scale(@SVGElement.SVG.Scale.AsString())">
+    <rect tabindex="@(SVGElement.IsChildElement ? -1 : 0)"
+            @onfocusin="FocusElement"
+            @onfocusout="UnfocusElement"
+            @ref=ElementReference
+            x=@SVGElement.X.AsString()
+            y=@SVGElement.Y.AsString()
+            width=@SVGElement.Width.AsString()
+            height=@SVGElement.Height.AsString()
+            stroke="@SVGElement.Stroke"
+            stroke-width="@SVGElement.StrokeWidth"
+            fill="@SVGElement.Fill"
+            @onmousedown="Select"
+            @onkeyup="KeyUp">
+@*  
+        @foreach(BaseAnimate animate in SVGElement.AnimationElements)
+        {
+            var Parameters = new Dictionary<string, object> { { "SVGElement", animate } };
+            <DynamicComponent Type=animate.Editor Parameters=Parameters />
+        }
+*@ 
+    </rect>
+</g>
+
+@if (SVGElement.Selected && SVGElement.SVG.EditMode is not EditMode.Add)
+{
+    <PrimaryAnchor OnMouseDown="() => AnchorSelect(0)" Position="(SVGElement.X, SVGElement.Y)" />
+    <PrimaryAnchor OnMouseDown="() => AnchorSelect(1)" Position="(SVGElement.X + SVGElement.Width, SVGElement.Y)" />
+    <PrimaryAnchor OnMouseDown="() => AnchorSelect(2)" Position="(SVGElement.X + SVGElement.Width, SVGElement.Y + SVGElement.Height)" />
+    <PrimaryAnchor OnMouseDown="() => AnchorSelect(3)" Position="(SVGElement.X, SVGElement.Y + SVGElement.Height)" />
+}

@@ -1,0 +1,24 @@
+﻿<svg @ref=SVGElementReference
+        @onmousemove="Move"
+        @onmousedown="Down"
+        @onmouseup="Up"
+        @onmouseout="Out"
+        @onwheel="Wheel"
+        style="border:1px solid black; cursor:@(TranslatePanner.HasValue ? "move" : "initial");"
+        width="100%"
+        height="100%"
+        @onmousedown:preventDefault="true">
+    <rect width="100%" height="100%" fill="transparent" @onmousedown=@UnSelect></rect>
+    <CascadingValue Value=this IsFixed=true>
+        @foreach (ISVGElement SVGElement in Elements)
+        {
+            var Parameters = new Dictionary<string, object> { { "SVGElement", SVGElement } };
+            <DynamicComponent Type=@SVGElement.Editor Parameters=Parameters />
+        }
+        <foreignObject x="5" y="0" height="22" width="150" style="font-size:20px;pointer-events:none;">Scale 1:@(Math.Round(Scale, 3).AsString())</foreignObject>
+        @if (SelectionBox is not null)
+        {
+            <BoxScaler Box=SelectionBox />
+        }
+    </CascadingValue>
+</svg>
