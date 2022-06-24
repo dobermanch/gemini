@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Gemini.Portal.Client.Components.DigitalTwin
 @using Gemini.Portal.Client.Components.Svg.Shapes.Rect
 
 <PageTitle>Index</PageTitle>
@@ -8,11 +9,18 @@
     <Svg @ref="_svg" Input=@Input InputUpdated="(string s) => { Input = s; StateHasChanged(); }" SelectionMode="SelectionMode.WindowSelection" />
 </div>
 
-<button onclick="@(() => Rect.AddNew(_svg))">Add Rect</button>
+<button onclick="@(() => TwinShape.AddNew(_svg))">Add Rect</button>
 
 @code {
     protected Svg _svg;
     protected string Input = @"
-    <rect x=""120"" y=""380"" height=""125"" width=""140"" fill=""green"" stroke=""blue"" stroke-width=""2""></rect>
+
+<g>
+    <rect x=""120"" y=""380"" height=""100"" width=""250"" fill=""rgb(233,233,233)"" stroke=""rgb(30,120,190)"" stroke-width=""3"">
+        <text x=""0"" y=""15"" fill=""red"">I love SVG!</text>
+    </rect>
+    <rect x=""130"" y=""390"" height=""45"" width=""45"" fill=""rgb(189,189,189)"" stroke=""rgb(30,120,190)"" stroke-width=""2""></rect>
+</g>
+    
     ";
 }

@@ -1,6 +1,8 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
 using Gemini.Portal.Client.Components.Svg.Shapes;
+using Gemini.Portal.Client.Components.Svg.Shapes.G;
+using Gemini.Portal.Client.Components.Svg.Shapes.Line;
 using Gemini.Portal.Client.Components.Svg.Shapes.Rect;
 using Microsoft.AspNetCore.Components;
 using IConfiguration = AngleSharp.IConfiguration;
@@ -85,9 +87,9 @@ public partial class Svg : ComponentBase
     //{ "ELLIPSE", typeof(Ellipse) },
     //{ "POLYGON", typeof(Polygon) },
     //{ "POLYLINE", typeof(Polyline) },
-    //{ "LINE", typeof(Line) },
+    { "LINE", typeof(Line) },
     //{ "PATH", typeof(Path) },
-    //{ "G", typeof(G) },
+    { "G", typeof(G) },
 };
 
     protected override async Task OnParametersSetAsync()

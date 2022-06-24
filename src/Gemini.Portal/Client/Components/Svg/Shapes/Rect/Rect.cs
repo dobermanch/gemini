@@ -40,64 +40,79 @@ public class Rect : Shape
         switch (SVG.EditMode)
         {
             case EditMode.Add:
-                if (AddPos is null)
-                {
-                    AddPos = (X, Y);
-                }
-                if (x < AddPos.Value.x)
-                {
-                    X = x;
-                    Width = AddPos.Value.x - x;
-                }
-                else
-                {
-                    X = AddPos.Value.x;
-                    Width = x - AddPos.Value.x;
-                }
-                if (y < AddPos.Value.y)
-                {
-                    Y = y;
-                    Height = AddPos.Value.y - y;
-                }
-                else
-                {
-                    Y = AddPos.Value.y;
-                    Height = y - AddPos.Value.y;
-                }
+                AddResize((x, y));
                 break;
             case EditMode.Move:
-                (double x, double y) diff = (x: x - SVG.MovePanner.x, y: y - SVG.MovePanner.y);
-                X += diff.x;
-                Y += diff.y;
+                Move((x, y));
                 break;
             case EditMode.MoveAnchor:
-                if (SVG.CurrentAnchor == null)
-                {
-                    SVG.CurrentAnchor = 0;
-                }
-                switch (SVG.CurrentAnchor)
-                {
-                    case 0:
-                        Width -= x - X;
-                        Height -= y - Y;
-                        X = x;
-                        Y = y;
-                        break;
-                    case 1:
-                        Width = x - X;
-                        Height -= y - Y;
-                        Y = y;
-                        break;
-                    case 2:
-                        Width = x - X;
-                        Height = y - Y;
-                        break;
-                    case 3:
-                        Width -= x - X;
-                        Height = y - Y;
-                        X = x;
-                        break;
-                }
+                Resize((x, y));
+                break;
+        }
+    }
+
+    protected virtual void AddResize((double x, double y) position)
+    {
+        if (AddPos is null)
+        {
+            AddPos = (X, Y);
+        }
+        if (position.x < AddPos.Value.x)
+        {
+            X = position.x;
+            Width = AddPos.Value.x - position.x;
+        }
+        else
+        {
+            X = AddPos.Value.x;
+            Width = position.x - AddPos.Value.x;
+        }
+        if (position.y < AddPos.Value.y)
+        {
+            Y = position.y;
+            Height = AddPos.Value.y - position.y;
+        }
+        else
+        {
+            Y = AddPos.Value.y;
+            Height = position.y - AddPos.Value.y;
+        }
+    }
+
+    protected virtual void Move((double x, double y) position)
+    {
+        (double x, double y) diff = (x: position.x - SVG.MovePanner.x, y: position.y - SVG.MovePanner.y);
+        X += diff.x;
+        Y += diff.y;
+    }
+
+    protected virtual void Resize((double x, double y) position)
+    {
+        if (SVG.CurrentAnchor == null)
+        {
+            SVG.CurrentAnchor = 0;
+        }
+        switch (SVG.CurrentAnchor)
+        {
+            case 0:
+                Width -= position.x - X;
+                Height -= position.y - Y;
+                X = position.x;
+                Y = position.y;
+                break;
+            case 1:
+                Width = position.x - X;
+                Height -= position.y - Y;
+                Y = position.y;
+                break;
+            case 2:
+                Width = position.x - X;
+                Height = position.y - Y;
+                break;
+            case 3:
+                Width -= position.x - X;
+                Height = position.y - Y;
+                X = position.x;
                 break;
         }
     }
@@ -125,7 +140,9 @@ public class Rect : Shape
             Changed = SVG.UpdateInput,
             Stroke = "black",
             StrokeWidth = "1",
-            Fill = "lightgrey"
+            Fill = "lightgrey",
+            Width = 100,
+            Height = 20
         };
         SVG.EditMode = EditMode.Add;
 

@@ -13,7 +13,7 @@ public abstract class ShapeEditor<TShape> : ComponentBase where TShape : Shape
 
     protected override async Task OnAfterRenderAsync(bool _)
     {
-        if (SVGElement.SVG.EditMode == EditMode.Scale /*|| (SVGElement is G && SVGElement.Selected)*/)
+        if (SVGElement.SVG.EditMode == EditMode.Scale || (SVGElement is G.G && SVGElement.Selected))
         {
             Box BBox = await SVGElement.SVG.GetBoundingBox(ElementReference);
             (double x, double y) = SVGElement.SVG.LocalDetransform((BBox.X - SVGElement.SVG.BBox.X, BBox.Y - SVGElement.SVG.BBox.Y));
