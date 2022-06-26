@@ -1,9 +1,4 @@
 ﻿@page "/"
-@using Gemini.Portal.Client.Components.DigitalTwin
-@using Gemini.Portal.Client.Components.DigitalTwin.Interface
-@using Gemini.Portal.Client.Components.Svg.Shapes.Line
-@using Gemini.Portal.Client.Components.Svg.Shapes.Rect
-@using Gemini.Portal.Client.Components.Svg.Shapes.Text
 
 <PageTitle>Index</PageTitle>
 
@@ -11,27 +6,6 @@
     <TwinEditor />
 </div>
 
-
-
-@*<textarea @bind="Input" @bind:event="oninput" style="width:100%;height:150px;" />
-<div style="height:80vh">
-    <Svg @ref="_svg" Input=@Input InputUpdated="(string s) => { Input = s; StateHasChanged(); }" SelectionMode="SelectionMode.WindowSelection" />
-</div>
-
-<button onclick="@(() => TwinShape.AddNew(_svg))">Add Rect</button>
-<button onclick="@(() => Text.AddNew(_svg))">Add Text</button>
-<button onclick="@(() => Line.AddNew(_svg))">Add Line</button>*@
-
-@code {
-    protected Svg _svg;
-    protected string Input = @"
-
-<g>
-    <rect x=""120"" y=""380"" height=""100"" width=""250"" fill=""rgb(233,233,233)"" stroke=""rgb(30,120,190)"" stroke-width=""3"">
-        <text x=""0"" y=""15"" fill=""red"">I love SVG!</text>
-    </rect>
-    <rect x=""130"" y=""390"" height=""45"" width=""45"" fill=""rgb(189,189,189)"" stroke=""rgb(30,120,190)"" stroke-width=""2""></rect>
-</g>
-    
-    ";
-}
+<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
+<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
+<MudAlert Severity="Severity.Normal">You can find documentation and examples on our website here: <MudLink Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit"><b>www.mudblazor.com</b></MudLink></MudAlert>
