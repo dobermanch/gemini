@@ -1,0 +1,23 @@
+﻿@inherits ShapeEditor<Text>
+
+<g transform="translate(@SVGElement.SVG.Translate.x.AsString() @SVGElement.SVG.Translate.y.AsString()) scale(@SVGElement.SVG.Scale.AsString())">
+    <text 
+        tabindex="@(SVGElement.IsChildElement ? -1 : 0)"
+        x=@SVGElement.X.AsString()
+        y=@SVGElement.Y.AsString()
+        stroke="@SVGElement.Stroke"
+        stroke-width="@SVGElement.StrokeWidth"
+        fill="@SVGElement.Fill"
+        @onfocusin="FocusElement"
+        @onfocusout="UnfocusElement"
+        @ref=ElementReference
+        @onmousedown="Select"
+        @onkeyup="KeyUp">
+        @SVGElement.Content        
+    </text>
+
+</g>
+@if (SVGElement.Selected && SVGElement.SVG.EditMode != EditMode.Add)
+{
+    <PrimaryAnchor OnMouseDown="() => AnchorSelect(0)" Position="(SVGElement.X, SVGElement.Y)" />
+}

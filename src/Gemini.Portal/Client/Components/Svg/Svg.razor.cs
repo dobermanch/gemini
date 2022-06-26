@@ -4,6 +4,7 @@ using Gemini.Portal.Client.Components.Svg.Shapes;
 using Gemini.Portal.Client.Components.Svg.Shapes.G;
 using Gemini.Portal.Client.Components.Svg.Shapes.Line;
 using Gemini.Portal.Client.Components.Svg.Shapes.Rect;
+using Gemini.Portal.Client.Components.Svg.Shapes.Text;
 using Microsoft.AspNetCore.Components;
 using IConfiguration = AngleSharp.IConfiguration;
 
@@ -90,6 +91,7 @@ public partial class Svg : ComponentBase
     { "LINE", typeof(Line) },
     //{ "PATH", typeof(Path) },
     { "G", typeof(G) },
+    { "TEXT", typeof(Text) },
 };
 
     protected override async Task OnParametersSetAsync()
@@ -98,7 +100,8 @@ public partial class Svg : ComponentBase
         {
             return;
         }
-        _input = Input;
+
+        _input = Input ??= "";
 
         IConfiguration config = Configuration.Default;
 
