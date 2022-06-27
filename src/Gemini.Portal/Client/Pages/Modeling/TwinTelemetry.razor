@@ -1,21 +1,9 @@
-﻿@page "/catalog"
+﻿@page "/telemetry"
 @using Gemini.Portal.Client.Components.DigitalTwin.Interface
 
-<h2>Interface Models</h2>
+<h2>Telemetry Models</h2>
 
 <MudPaper Elevation="3" Class="mt-4">
- @*   <MudToolBar>
-        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Class="mr-5" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Add" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Edit" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Remove" Color="Color.Inherit" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Settings" Color="Color.Inherit" />
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Outlined.Notifications" />
-        <MudIconButton Icon="@Icons.Material.Outlined.PushPin" />
-        <MudIconButton Icon="@Icons.Material.Outlined.PeopleAlt" />
-        <MudIconButton Icon="@Icons.Material.Outlined.MoreVert" Color="Color.Inherit" />
-    </MudToolBar>*@
     <MudToolBar>
         <MudPaper Elevation="0" Width="300px" Class="d-flex">
             <MudTextField @bind-Value="searchString" Placeholder="Search" OnKeyUp="@OnKeyPress" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>

@@ -1,0 +1,79 @@
+﻿@page "/interfaces"
+@using Gemini.Portal.Client.Components.DigitalTwin.Interface
+
+<h2>Interface Models</h2>
+
+<MudPaper Elevation="3" Class="mt-4">
+    <MudToolBar>
+        <MudPaper Elevation="0" Width="300px" Class="d-flex">
+            <MudTextField @bind-Value="searchString" Placeholder="Search" OnKeyUp="@OnKeyPress" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudIconButton Icon="@Icons.Material.Filled.Sort" Color="Color.Inherit" Size="Size.Medium" OnClick="@OnOrderClick" />
+        </MudPaper>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary">Create</MudButton>
+    </MudToolBar>
+</MudPaper>
+
+<MudPaper Elevation="0" Class="d-flex mt-4">
+    
+    <MudPaper Elevation="0" Class="mr-4">
+        
+
+        <MudList Clickable="true" Dense="true" @bind-SelectedValue="selectedValue">
+            @foreach(var model in _interfaces)
+            {
+                <MudListItem Value="@model">
+                    <TwinInterfacePane Model="@model" />
+                </MudListItem>
+            }            
+        </MudList>
+    </MudPaper>
+
+    <MudPaper Elevation="3" Width="600px" Class="pa-4">
+        <TwinInterfaceEditor Model="@((TwinInterfaceViewModel)selectedValue)" />
+    </MudPaper>
+
+</MudPaper>
+
+@code {
+    private IList<TwinInterfaceViewModel> _data = 
+        Enumerable.Range(0, 100)
+            .Select(it => new TwinInterfaceViewModel())
+            .ToList();
+
+    private IList<TwinInterfaceViewModel> _interfaces;
+
+
+    private object selectedValue;
+    private string searchString;
+
+    protected override Task OnInitializedAsync()
+    {
+        _interfaces = _data;
+        return base.OnInitializedAsync();
+    }
+
+    private void OnKeyPress(KeyboardEventArgs args)
+    {
+        _interfaces = _data.Where(FilterFunc).ToArray();
+        StateHasChanged();
+    }
+
+    private bool FilterFunc(TwinInterfaceViewModel model)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (model.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+            return true;
+        return false;
+    }
+
+    public void OnOrderClick(MouseEventArgs args)
+    {
+        _interfaces = _data.OrderBy(it => it.Name).ToArray();
+    }
+}

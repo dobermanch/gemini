@@ -1,7 +1,10 @@
-﻿<MudNavMenu>
-    <MudNavLink Href="catalog" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.LocalLibrary">Catalog</MudNavLink>
+﻿<MudNavMenu>    
     <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    
-    @*<MudNavLink Href="counter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Add">Counter</MudNavLink>
-    <MudNavLink Href="fetchdata" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.List">Fetch data</MudNavLink>    *@
+
+    <MudNavGroup Title="Twin Modeling" Expanded="true">
+        <MudNavLink Href="interfaces" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Apartment">Interface</MudNavLink>
+        <MudNavLink Href="properties" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Ballot">Property</MudNavLink>
+        <MudNavLink Href="telemetry" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.SettingsInputComponent">Telemetry</MudNavLink>
+        <MudNavLink Href="schema" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Schema">Schema</MudNavLink>
+    </MudNavGroup>
 </MudNavMenu>
