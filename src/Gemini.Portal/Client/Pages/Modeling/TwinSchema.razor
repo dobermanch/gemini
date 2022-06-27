@@ -1,5 +1,5 @@
 ﻿@page "/schema"
-@using Gemini.Portal.Client.Components.DigitalTwin.Interface
+@using Gemini.Portal.Client.Components.DigitalTwin.Schema
 
 <h2>Schema Models</h2>
 
@@ -23,25 +23,25 @@
             @foreach(var model in _interfaces)
             {
                 <MudListItem Value="@model">
-                    <TwinInterfacePane Model="@model" />
+                    <TwinSchemaPane Model="@model" />
                 </MudListItem>
             }            
         </MudList>
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
-        <TwinInterfaceEditor Model="@((TwinInterfaceViewModel)selectedValue)" />
+        <TwinSchemaEditor Model="@((TwinSchemaViewModel)selectedValue)" />
     </MudPaper>
 
 </MudPaper>
 
 @code {
-    private IList<TwinInterfaceViewModel> _data = 
+    private IList<TwinSchemaViewModel> _data = 
         Enumerable.Range(0, 100)
-            .Select(it => new TwinInterfaceViewModel())
+            .Select(it => new TwinSchemaViewModel())
             .ToList();
 
-    private IList<TwinInterfaceViewModel> _interfaces;
+    private IList<TwinSchemaViewModel> _interfaces;
 
 
     private object selectedValue;
@@ -59,7 +59,7 @@
         StateHasChanged();
     }
 
-    private bool FilterFunc(TwinInterfaceViewModel model)
+    private bool FilterFunc(TwinSchemaViewModel model)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;

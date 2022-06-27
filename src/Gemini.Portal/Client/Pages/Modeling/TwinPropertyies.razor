@@ -1,5 +1,5 @@
 ﻿@page "/properties"
-@using Gemini.Portal.Client.Components.DigitalTwin.Interface
+@using Gemini.Portal.Client.Components.DigitalTwin.Property
 
 <h2>Property Models</h2>
 
@@ -23,25 +23,25 @@
             @foreach(var model in _interfaces)
             {
                 <MudListItem Value="@model">
-                    <TwinInterfacePane Model="@model" />
+                    <TwinPropertyPane Model="@model" />
                 </MudListItem>
             }            
         </MudList>
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
-        <TwinInterfaceEditor Model="@((TwinInterfaceViewModel)selectedValue)" />
+        <TwinPropertyEditor Model="@((TwinPropertyViewModel)selectedValue)" />
     </MudPaper>
 
 </MudPaper>
 
 @code {
-    private IList<TwinInterfaceViewModel> _data = 
+    private IList<TwinPropertyViewModel> _data = 
         Enumerable.Range(0, 100)
-            .Select(it => new TwinInterfaceViewModel())
+            .Select(it => new TwinPropertyViewModel())
             .ToList();
 
-    private IList<TwinInterfaceViewModel> _interfaces;
+    private IList<TwinPropertyViewModel> _interfaces;
 
 
     private object selectedValue;
@@ -59,7 +59,7 @@
         StateHasChanged();
     }
 
-    private bool FilterFunc(TwinInterfaceViewModel model)
+    private bool FilterFunc(TwinPropertyViewModel model)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;

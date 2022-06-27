@@ -1,14 +1,14 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Schema;
+﻿using Gemini.Portal.Client.Components.DigitalTwin.Interface;
 
-namespace Gemini.Portal.Client.Components.DigitalTwin.Interface;
+namespace Gemini.Portal.Client.Components.DigitalTwin.Schema;
 
-public class TwinInterfacesViewModel : ViewModelBase
+public class TwinSchemaViewModel : ViewModelBase
 {
     private readonly TwinInterface _model;
 
-    public TwinInterfacesViewModel(TwinInterface? model = null)
+    public TwinSchemaViewModel(TwinSchema? model = null)
     {
-        _model = model ?? new TwinInterface
+        _model =  new TwinInterface
         {
             Id = "dtmi:;1",
         };

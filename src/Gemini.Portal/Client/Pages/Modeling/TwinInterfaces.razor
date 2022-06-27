@@ -30,18 +30,18 @@
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
-        <TwinInterfaceEditor Model="@((TwinInterfaceViewModel)selectedValue)" />
+        <TwinInterfaceEditor Model="@((TwinInterfacesViewModel)selectedValue)" />
     </MudPaper>
 
 </MudPaper>
 
 @code {
-    private IList<TwinInterfaceViewModel> _data = 
+    private IList<TwinInterfacesViewModel> _data = 
         Enumerable.Range(0, 100)
-            .Select(it => new TwinInterfaceViewModel())
+            .Select(it => new TwinInterfacesViewModel())
             .ToList();
 
-    private IList<TwinInterfaceViewModel> _interfaces;
+    private IList<TwinInterfacesViewModel> _interfaces;
 
 
     private object selectedValue;
@@ -59,7 +59,7 @@
         StateHasChanged();
     }
 
-    private bool FilterFunc(TwinInterfaceViewModel model)
+    private bool FilterFunc(TwinInterfacesViewModel model)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
