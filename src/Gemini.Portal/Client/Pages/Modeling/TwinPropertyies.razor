@@ -63,7 +63,7 @@
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
-        if (model.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (model.Name.Value.Contains(searchString, StringComparison.OrdinalIgnoreCase))
             return true;
         if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
             return true;

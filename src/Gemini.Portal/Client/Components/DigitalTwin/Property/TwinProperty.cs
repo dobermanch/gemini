@@ -16,7 +16,7 @@ public class TwinProperty
 
     public string? Description { get; set; }
 
-    public string? DispalyName { get; set; }
+    public string? DisplayName { get; set; }
 
     public TwinUnit? Unit { get; set; }
 

@@ -1,6 +1,6 @@
 {
-  "name": "Gemini.Portal",
-  "short_name": "Gemini.Portal",
+  "name": "Gemini Portal",
+  "short_name": "Gemini Portal",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -13,7 +13,9 @@
             <MudTextField T="string" @bind-Value="@Model.Id.Value.Version" Label="Version" Variant="Variant.Outlined" Margin="Margin.Dense" />
         </div>
 
-        <MudTextField T="string" @bind-Value="@Model.DisplayName.Value" Label="Display Name" Variant="Variant.Outlined" HelperText="A localizable name for display" Class="mb-4" />
+        <MudTextField T="string" @bind-Value="@Model.Name.Value" Label="Name" Variant="Variant.Outlined" HelperText="The ''programming'' name of the property." Margin="Margin.Dense" Class="mb-4" />
+
+        <MudTextField T="string" @bind-Value="@Model.DisplayName.Value" Label="Display Name" Variant="Variant.Outlined" HelperText="A localizable name for display" Margin="Margin.Dense" Class="mb-4" />
 
         <MudTextField T="string" @bind-Value="@Model.Description.Value" Label="Description" Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="A localizable description for display" Lines="5" Class="mb-4" />
 

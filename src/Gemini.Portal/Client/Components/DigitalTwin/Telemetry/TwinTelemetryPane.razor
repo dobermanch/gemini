@@ -1,8 +1,8 @@
 ﻿
 <MudPaper Elevation="2" Height="80px" Width="300px">
     <MudBadge Dot="true" Visible="@Model.IsEdited" Color="Color.Info" Overlap="true" Origin="Origin.TopRight" Class="mx-2 my-3">
-        <MudPaper Elevation="0" Class="d-flex" onmouseover="@OnMouseOver" onmouseout="@OnMouseOut">
-            <MudIcon Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Class="d-inline align-content-center" Size="Size.Large"/>
+        <MudPaper Elevation="0" Class="d-flex">
+            <MudIcon Icon="@Icons.Material.Filled.SettingsInputComponent" Color="Color.Inherit" Class="d-inline align-content-center" Size="Size.Large"/>
     
             <div class="d-inline ml-2">
                 <MudText>@Model.Name</MudText>
@@ -14,16 +14,4 @@
 @code {
     [Parameter]
     public TwinTelemetryViewModel Model { get; set; }
-
-    protected bool _hover;
-
-    private void OnMouseOver(MouseEventArgs args)
-    {
-        _hover = true;
-    }
-
-    private void OnMouseOut(MouseEventArgs args)
-    {
-        _hover = false;
-    }
 }
