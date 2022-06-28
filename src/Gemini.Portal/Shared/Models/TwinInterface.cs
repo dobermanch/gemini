@@ -1,6 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Schema;
-
-namespace Gemini.Portal.Client.Components.DigitalTwin.Interface;
+﻿namespace Gemini.Portal.Shared.Models;
 
 
 public class TwinInterface : TwinModelBase

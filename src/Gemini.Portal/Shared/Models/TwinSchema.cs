@@ -1,4 +1,4 @@
-﻿namespace Gemini.Portal.Client.Components.DigitalTwin.Schema;
+﻿namespace Gemini.Portal.Shared.Models;
 
 public abstract class TwinSchema
 {

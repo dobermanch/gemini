@@ -1,6 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Schema;
-
-namespace Gemini.Portal.Client.Components.DigitalTwin.Telemetry;
+﻿namespace Gemini.Portal.Shared.Models;
 
 public class TwinTelemetry
 {

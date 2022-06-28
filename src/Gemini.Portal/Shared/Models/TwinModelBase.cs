@@ -1,11 +1,10 @@
 ﻿using System.Globalization;
 
-namespace Gemini.Portal.Client.Components.DigitalTwin;
+namespace Gemini.Portal.Shared.Models;
 
 public abstract class TwinModelBase
 {
     public abstract Iri Type { get; }
-
 }
 
 

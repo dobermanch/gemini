@@ -1,5 +1,6 @@
 ﻿using Gemini.Portal.Client.Components.DigitalTwin.Interface;
 using Gemini.Portal.Client.Components.DigitalTwin.Schema;
+using Gemini.Portal.Shared.Models;
 
 namespace Gemini.Portal.Client.Components.DigitalTwin.Property;
 
