@@ -5,27 +5,30 @@ namespace Gemini.Portal.Client.Components.DigitalTwin.Telemetry;
 
 public class TwinTelemetryViewModel : ViewModelBase
 {
-    private readonly TwinTelemetry _model;
-
     public TwinTelemetryViewModel(TwinTelemetry? model = null)
     {
-        _model = model ?? new TwinTelemetry
+        IsNew = model == null;
+        Model = model ?? new TwinTelemetry
         {
             Id = "dtmi:;1",
         };
 
-        RegisterProperty(nameof(Id), _model.Id, value => _model.Id = value);
-        RegisterProperty(nameof(Comment), _model.Comment, value => _model.Comment = value);
-        RegisterProperty(nameof(Name), _model.Name, value => _model.Name = value);
-        RegisterProperty(nameof(Description), _model.Description, value => _model.Description = value);
-        RegisterProperty(nameof(DisplayName), _model.DisplayName, value => _model.DisplayName = value);
-        RegisterProperty(nameof(Unit), _model.Unit, value => _model.Unit = value);
-        RegisterProperty(nameof(Schema), _model.Schema, value => _model.Schema = value);
+        RegisterProperty(nameof(Id), Model.Id, value => Model.Id = value);
+        RegisterProperty(nameof(Comment), Model.Comment, value => Model.Comment = value);
+        RegisterProperty(nameof(Name), Model.Name, value => Model.Name = value);
+        RegisterProperty(nameof(Description), Model.Description, value => Model.Description = value);
+        RegisterProperty(nameof(DisplayName), Model.DisplayName, value => Model.DisplayName = value);
+        RegisterProperty(nameof(Unit), Model.Unit, value => Model.Unit = value);
+        RegisterProperty(nameof(Schema), Model.Schema, value => Model.Schema = value);
     }
+
+    public override bool IsEdited => base.IsEdited || IsNew || IsDeleted;
+
+    public TwinTelemetry Model { get; private set; }
 
     public EditableProperty<Dtmi> Id => GetProperty<Dtmi>();
 
-    public Iri Type => _model.Type;
+    public Iri Type => Model.Type;
 
     public EditableProperty<string> Name => GetProperty<string>();
 
@@ -38,4 +41,24 @@ public class TwinTelemetryViewModel : ViewModelBase
     public EditableProperty<TwinUnit> Unit => GetProperty<TwinUnit>();
 
     public EditableProperty<TwinSchema> Schema => GetProperty<TwinSchema>();
+
+    public bool IsNew { get; private set; }
+
+    public bool IsDeleted { get; private set; }
+
+    public void MarkForDeletion()
+    {
+        IsDeleted = true;
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
+        IsDeleted = false;
+    }
+
+    public void Stored()
+    {
+        IsNew = false;
+    }
 }

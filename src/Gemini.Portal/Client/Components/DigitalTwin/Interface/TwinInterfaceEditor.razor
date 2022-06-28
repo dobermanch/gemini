@@ -1,4 +1,6 @@
-﻿<MudPaper Elevation="0">
+﻿@implements IDisposable
+
+<MudPaper Elevation="0">
 
     @if (Model is null)
     {
@@ -24,4 +26,26 @@
 @code {
     [Parameter]
     public TwinInterfacesViewModel? Model { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (Model is not null)
+        {
+            Model.Changed += OnChanged;
+        }
+        base.OnInitialized();
+    }
+
+    private void OnChanged(object sender, EditableEventArgs args)
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        if (Model is not null)
+        {
+            Model.Changed -= OnChanged;
+        }
+    }
 }

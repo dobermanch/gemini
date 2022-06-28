@@ -1,14 +1,25 @@
 ﻿
-<MudPaper Elevation="2" Height="80px" Width="300px">
-    <MudBadge Dot="true" Visible="@Model.IsEdited" Color="Color.Info" Overlap="true" Origin="Origin.TopRight" Class="mx-2 my-3">
-        <MudPaper Elevation="0" Class="d-flex">
-            <MudIcon Icon="@Icons.Material.Filled.Apartment" Color="Color.Inherit" Class="d-inline align-content-center" Size="Size.Large"/>
+<MudPaper Elevation="2" Height="80px" Width="300px" Class="d-flex">
+    @if (Model.IsDeleted)
+    {
+        <MudPaper Width="3px" Class="d-inline pl-1 mud-error"></MudPaper>
+    }
+    else if (Model.IsNew)
+    {
+        <MudPaper Width="3px" Class="d-inline pl-1 mud-info"></MudPaper>
+    }
+    else if (Model.IsEdited)
+    {
+        <MudPaper Width="3px" Class="d-inline pl-1 mud-warning"></MudPaper>
+    }
+
+    <MudPaper Elevation="0" Class="d-inline d-flex pa-2">
+        <MudIcon Icon="@Icons.Material.Filled.Apartment" Color="Color.Inherit" Class="d-inline align-content-center" Size="Size.Large"/>
     
-            <div class="d-inline ml-2">
-                <MudText>@Model.Name</MudText>
-            </div>
-        </MudPaper>
-    </MudBadge>
+        <div class="d-inline ml-2">
+            <MudText>@Model.Name</MudText>
+        </div>
+    </MudPaper>
 </MudPaper>
 
 @code {

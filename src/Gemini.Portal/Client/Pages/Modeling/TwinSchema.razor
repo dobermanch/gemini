@@ -1,5 +1,6 @@
 ﻿@page "/schema"
 @using Gemini.Portal.Client.Components.DigitalTwin.Schema
+@using Gemini.Portal.Client.Services
 
 <h2>Schema Models</h2>
 
@@ -34,30 +35,22 @@
 </MudPaper>
 
 @code {
-    private IList<TwinSchemaViewModel> _data = new []
-    {
-        new TwinSchemaViewModel(new BooleanTwinSchema()),
-        new TwinSchemaViewModel(new DateTwinSchema()),
-        new TwinSchemaViewModel(new DateTimeTwinSchema()),
-        new TwinSchemaViewModel(new DoubleTwinSchema()),
-        new TwinSchemaViewModel(new DurationTwinSchema()),
-        new TwinSchemaViewModel(new FloatTwinSchema()),
-        new TwinSchemaViewModel(new IntegerTwinSchema()),
-        new TwinSchemaViewModel(new LongTwinSchema()),
-        new TwinSchemaViewModel(new StringTwinSchema()),
-        new TwinSchemaViewModel(new TimeTwinSchema()),
-    };
+    [Inject]
+    public ITwinSchemaService SchemaService { get; set; }
 
+    private IList<TwinSchemaViewModel> _data;
     private IList<TwinSchemaViewModel> _interfaces;
 
 
     private object selectedValue;
     private string searchString;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        _interfaces = _data;
-        return base.OnInitializedAsync();
+        var data = await SchemaService.GetAllAsync();
+        _interfaces = _data = data.Select(it => new TwinSchemaViewModel(it)).ToList();
+
+        await base.OnInitializedAsync();
     }
 
     private void OnKeyPress(KeyboardEventArgs args)

@@ -1,16 +1,25 @@
 ﻿@page "/telemetry"
+@using Gemini.Portal.Client.Components.DigitalTwin.Schema
 @using Gemini.Portal.Client.Components.DigitalTwin.Telemetry
+@using Gemini.Portal.Client.Services
+@implements IDisposable
 
 <h2>Telemetry Models</h2>
 
 <MudPaper Elevation="3" Class="mt-4">
     <MudToolBar>
         <MudPaper Elevation="0" Width="300px" Class="d-flex">
-            <MudTextField @bind-Value="searchString" Placeholder="Search" OnKeyUp="@OnKeyPress" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" OnKeyUp="@OnKeyPress" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudIconButton Icon="@Icons.Material.Filled.Sort" Color="Color.Inherit" Size="Size.Medium" OnClick="@OnOrderClick" />
         </MudPaper>
         <MudSpacer />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">Create</MudButton>
+        <MudButton Variant="Variant.Filled" Class="ml-2" Color="Color.Primary" OnClick="@(async args => await OnCreate())" >Create</MudButton>
+
+        @if (_isEdited)
+        {
+            <MudButton Variant="Variant.Filled" Class="ml-2" Color="Color.Primary" OnClick="@(async args => await OnSave())">Save</MudButton>
+            <MudButton Variant="Variant.Filled" Class="ml-2" Color="Color.Secondary" OnClick="@(async args => await OnUndo())">Undo</MudButton>
+        }
     </MudToolBar>
 </MudPaper>
 
@@ -19,8 +28,8 @@
     <MudPaper Elevation="0" Class="mr-4">
         
 
-        <MudList Clickable="true" Dense="true" @bind-SelectedValue="selectedValue">
-            @foreach(var model in _interfaces)
+        <MudList Clickable="true" Dense="true" @bind-SelectedValue="_selectedValue">
+            @foreach(var model in _telemetry)
             {
                 <MudListItem Value="@model">
                     <TwinTelemetryPane Model="@model" />
@@ -30,50 +39,146 @@
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
-        <TwinTelemetryEditor Model="@((TwinTelemetryViewModel)selectedValue)" />
+        <TwinTelemetryEditor Model="@((TwinTelemetryViewModel)_selectedValue)" />
     </MudPaper>
 
 </MudPaper>
 
 @code {
-    private IList<TwinTelemetryViewModel> _data = 
-        Enumerable.Range(0, 100)
-            .Select(it => new TwinTelemetryViewModel())
-            .ToList();
+    [Inject]
+    public ITwinTelemetryService TelemetryService { get; set; }
+    [Inject]
+    public ITwinSchemaService SchemaService { get; set; }
 
-    private IList<TwinTelemetryViewModel> _interfaces;
+    private IList<TwinSchemaViewModel> _schemas;
+    private IList<TwinTelemetryViewModel> _data;
+    private IList<TwinTelemetryViewModel> _telemetry;
+    private object? _selectedValue;
+    private string? _searchString;
 
+    private bool _isEdited => _telemetry.Any(it => it.IsEdited);
 
-    private object selectedValue;
-    private string searchString;
-
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        _interfaces = _data;
-        return base.OnInitializedAsync();
+        var schemas = await SchemaService.GetAllAsync();
+        _schemas = schemas.Select(it => new TwinSchemaViewModel(it)).ToArray();
+
+        var response = await TelemetryService.GetAllAsync();
+
+        _telemetry = _data = response.Select(it => {
+            var model = new TwinTelemetryViewModel(it);
+            model.Changed += OnChanged;
+            return model;
+        }).ToList();
+        _selectedValue = _telemetry.FirstOrDefault();
+
+        await base.OnInitializedAsync();
     }
 
     private void OnKeyPress(KeyboardEventArgs args)
     {
-        _interfaces = _data.Where(FilterFunc).ToArray();
+        _telemetry = _data.Where(FilterFunc).ToArray();
         StateHasChanged();
     }
 
     private bool FilterFunc(TwinTelemetryViewModel model)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
+        if (string.IsNullOrWhiteSpace(_searchString))
             return true;
-        if (model.Name.Value.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (model.Name.Value.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+        if (model.Description.Value?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
             return true;
-        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+        if (model.Description.Value?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
             return true;
         return false;
     }
 
     public void OnOrderClick(MouseEventArgs args)
     {
-        _interfaces = _data.OrderBy(it => it.Name).ToArray();
+        _telemetry = _data.OrderBy(it => it.Name).ToArray();
+    }
+
+    private Task OnCreate()
+    {
+        var model = new TwinTelemetryViewModel();
+        model.Changed += OnChanged;
+        _telemetry.Add(model);
+        _selectedValue = model;
+
+        return Task.CompletedTask;
+    }
+
+    private async Task OnSave()
+    {
+        var toEdit = _telemetry.Where(x => x.IsEdited).ToArray();
+
+        if (toEdit.Any())
+        {
+            foreach (var item in toEdit)
+            {
+                item.Commit();
+            }
+
+            var toUpdate = toEdit.Where(it => !it.IsNew && !it.IsDeleted).Select(it => it.Model).ToArray();
+            if (toUpdate.Any())
+            {
+                await TelemetryService.UpdateAsync(toUpdate);
+            }
+
+            var toDelete = toEdit.Where(it => !it.IsNew && it.IsDeleted).ToArray();
+            if (toDelete.Any())
+            {
+                await TelemetryService.DeleteAsync(toDelete.Select(it => it.Model).ToArray());
+                foreach(var model in toDelete)
+                {
+                    model.Changed += OnChanged;
+                    model.Stored();
+                }
+            }
+
+            var toAdd = toEdit.Where(it => it.IsNew).ToArray();
+            if (toAdd.Any())
+            {
+                await TelemetryService.CreateAsync(toAdd.Select(it => it.Model).ToArray());
+                foreach(var model in toAdd)
+                {
+                    model.Stored();
+                }
+            }            
+        }
+    }
+
+    private Task OnUndo()
+    {
+        var edited = _telemetry.Where(x => x.IsEdited).ToArray();
+        if (edited.Any())
+        {
+            foreach (var model in edited)
+            {
+                if (model.IsNew)
+                {
+                    model.Changed -= OnChanged;
+                    _telemetry.Remove(model);
+                }
+
+                model.Reset();                
+            }         
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        foreach(var model in _telemetry)
+        {
+            model.Changed -= OnChanged;
+        }
+    }
+
+    private void OnChanged(object sender, EditableEventArgs args)
+    {
+        StateHasChanged();
     }
 }

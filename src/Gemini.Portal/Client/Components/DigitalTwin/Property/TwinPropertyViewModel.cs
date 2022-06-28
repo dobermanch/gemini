@@ -5,32 +5,36 @@ namespace Gemini.Portal.Client.Components.DigitalTwin.Property;
 
 public class TwinPropertyViewModel : ViewModelBase
 {
-    private readonly TwinProperty _model;
-
     public TwinPropertyViewModel(TwinProperty? model = null)
     {
-        _model = model ?? new TwinProperty
+        IsNew = model == null;
+        Model = model ?? new TwinProperty
         {
             Id = "dtmi:;1",
+            Schema = new StringTwinSchema()
         };
 
-        RegisterProperty(nameof(Id), _model.Id, value => _model.Id = value);
-        RegisterProperty(nameof(Name), _model.Name, value => _model.Name = value);
-        RegisterProperty(nameof(Schema), _model.Schema, value => _model.Schema = value);
-        RegisterProperty(nameof(Comment), _model.Comment, value => _model.Comment = value);
-        RegisterProperty(nameof(Description), _model.Description, value => _model.Description = value);
-        RegisterProperty(nameof(DisplayName), _model.DisplayName, value => _model.DisplayName = value);
-        RegisterProperty(nameof(Unit), _model.Unit, value => _model.Unit = value);
-        RegisterProperty(nameof(Writable), _model.Writable, value => _model.Writable = value);
+        RegisterProperty(nameof(Id), Model.Id, value => Model.Id = value);
+        RegisterProperty(nameof(Name), Model.Name, value => Model.Name = value);
+        RegisterProperty(nameof(Schema), new TwinSchemaViewModel(Model.Schema), value => Model.Schema = value.Model);
+        RegisterProperty(nameof(Comment), Model.Comment, value => Model.Comment = value);
+        RegisterProperty(nameof(Description), Model.Description, value => Model.Description = value);
+        RegisterProperty(nameof(DisplayName), Model.DisplayName, value => Model.DisplayName = value);
+        RegisterProperty(nameof(Unit), Model.Unit, value => Model.Unit = value);
+        RegisterProperty(nameof(Writable), Model.Writable, value => Model.Writable = value);
     }
+
+    public override bool IsEdited => base.IsEdited || IsNew || IsDeleted;
+
+    public TwinProperty Model { get; private set; }
 
     public EditableProperty<string> Name => GetProperty<string>();
 
     public EditableProperty<Dtmi> Id => GetProperty<Dtmi>();
 
-    public Iri Type => _model.Type;
+    public Iri Type => Model.Type;
 
-    public EditableProperty<TwinSchema> Schema => GetProperty<TwinSchema>();
+    public EditableProperty<TwinSchemaViewModel> Schema => GetProperty<TwinSchemaViewModel>();
 
     public EditableProperty<string?> Comment => GetProperty<string?>();
 
@@ -41,4 +45,24 @@ public class TwinPropertyViewModel : ViewModelBase
     public EditableProperty<TwinUnit> Unit => GetProperty<TwinUnit>();
 
     public EditableProperty<bool?> Writable => GetProperty<bool?>();
+
+    public bool IsNew { get; private set; }
+
+    public bool IsDeleted { get; private set; }
+
+    public void MarkForDeletion()
+    {
+        IsDeleted = true;
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
+        IsDeleted = false;
+    }
+
+    public void Stored()
+    {
+        IsNew = false;
+    }
 }

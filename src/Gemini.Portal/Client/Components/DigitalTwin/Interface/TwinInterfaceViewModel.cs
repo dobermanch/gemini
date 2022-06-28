@@ -4,23 +4,26 @@ namespace Gemini.Portal.Client.Components.DigitalTwin.Interface;
 
 public class TwinInterfacesViewModel : ViewModelBase
 {
-    private readonly TwinInterface _model;
-
     public TwinInterfacesViewModel(TwinInterface? model = null)
     {
-        _model = model ?? new TwinInterface
+        IsNew = model == null;
+        Model = model ?? new TwinInterface
         {
             Id = "dtmi:;1",
         };
 
-        RegisterProperty(nameof(Id), _model.Id, value => _model.Id = value);
-        RegisterProperty(nameof(Comment), _model.Comment, value => _model.Comment = value);
-        RegisterProperty(nameof(Contents), _model.Contents, value => _model.Contents = value);
-        RegisterProperty(nameof(Description), _model.Description, value => _model.Description = value);
-        RegisterProperty(nameof(DisplayName), _model.DisplayName, value => _model.DisplayName = value);
-        RegisterProperty(nameof(Extends), _model.Extends, value => _model.Extends = value);
-        RegisterProperty(nameof(Schema), _model.Schema, value => _model.Schema = value);
+        RegisterProperty(nameof(Id), Model.Id, value => Model.Id = value);
+        RegisterProperty(nameof(Comment), Model.Comment, value => Model.Comment = value);
+        RegisterProperty(nameof(Contents), Model.Contents, value => Model.Contents = value);
+        RegisterProperty(nameof(Description), Model.Description, value => Model.Description = value);
+        RegisterProperty(nameof(DisplayName), Model.DisplayName, value => Model.DisplayName = value);
+        RegisterProperty(nameof(Extends), Model.Extends, value => Model.Extends = value);
+        RegisterProperty(nameof(Schema), Model.Schema, value => Model.Schema = value);
     }
+
+    public override bool IsEdited => base.IsEdited || IsNew || IsDeleted;
+
+    public TwinInterface Model { get; private set; }
 
     public string Name => !string.IsNullOrWhiteSpace(DisplayName.Value)
         ? DisplayName.Value
@@ -28,9 +31,9 @@ public class TwinInterfacesViewModel : ViewModelBase
 
     public EditableProperty<Dtmi> Id => GetProperty<Dtmi>();
 
-    public Iri Type => _model.Type;
+    public Iri Type => Model.Type;
 
-    public Iri Context => _model.Context;
+    public Iri Context => Model.Context;
 
     public EditableProperty<string?> Comment => GetProperty<string?>();
 
@@ -43,4 +46,24 @@ public class TwinInterfacesViewModel : ViewModelBase
     public EditableProperty<IList<Dtmi>> Extends => GetProperty<IList<Dtmi>>();
 
     public EditableProperty<TwinSchema?> Schema => GetProperty<TwinSchema?>();
+
+    public bool IsNew { get; private set; }
+
+    public bool IsDeleted { get; private set; }
+
+    public void MarkForDeletion()
+    {
+        IsDeleted = true;
+    }
+
+    public override void Reset()
+    {
+        base.Reset();
+        IsDeleted = false;
+    }
+
+    public void Stored()
+    {
+        IsNew = false;
+    }
 }

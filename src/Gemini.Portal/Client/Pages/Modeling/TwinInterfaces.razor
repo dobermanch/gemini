@@ -1,25 +1,31 @@
 ﻿@page "/interfaces"
 @using Gemini.Portal.Client.Components.DigitalTwin.Interface
+@using Gemini.Portal.Client.Services
+@implements IDisposable
 
 <h2>Interface Models</h2>
 
 <MudPaper Elevation="3" Class="mt-4">
     <MudToolBar>
         <MudPaper Elevation="0" Width="300px" Class="d-flex">
-            <MudTextField @bind-Value="searchString" Placeholder="Search" OnKeyUp="@OnKeyPress" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" OnKeyUp="@OnKeyPress" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
             <MudIconButton Icon="@Icons.Material.Filled.Sort" Color="Color.Inherit" Size="Size.Medium" OnClick="@OnOrderClick" />
         </MudPaper>
         <MudSpacer />
-        <MudButton Variant="Variant.Filled" Color="Color.Primary">Create</MudButton>
+        <MudButton Variant="Variant.Filled" Class="ml-2" Color="Color.Primary" OnClick="@(async args => await OnCreate())" >Create</MudButton>
+
+        @if (_isEdited)
+        {
+            <MudButton Variant="Variant.Filled" Class="ml-2" Color="Color.Primary" OnClick="@(async args => await OnSave())">Save</MudButton>
+            <MudButton Variant="Variant.Filled" Class="ml-2" Color="Color.Secondary" OnClick="@(async args => await OnUndo())">Undo</MudButton>
+        }
     </MudToolBar>
 </MudPaper>
 
 <MudPaper Elevation="0" Class="d-flex mt-4">
     
-    <MudPaper Elevation="0" Class="mr-4">
-        
-
-        <MudList Clickable="true" Dense="true" @bind-SelectedValue="selectedValue">
+    <MudPaper Elevation="0" Class="mr-4">        
+        <MudList Clickable="true" Dense="true" @bind-SelectedValue="_selectedValue">
             @foreach(var model in _interfaces)
             {
                 <MudListItem Value="@model">
@@ -30,27 +36,34 @@
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
-        <TwinInterfaceEditor Model="@((TwinInterfacesViewModel)selectedValue)" />
+        <TwinInterfaceEditor Model="@((TwinInterfacesViewModel)_selectedValue)" />
     </MudPaper>
 
 </MudPaper>
 
 @code {
-    private IList<TwinInterfacesViewModel> _data = 
-        Enumerable.Range(0, 100)
-            .Select(it => new TwinInterfacesViewModel())
-            .ToList();
+    [Inject]
+    public ITwinInterfaceService InterfaceService { get; set; }
 
+    private IList<TwinInterfacesViewModel> _data;
     private IList<TwinInterfacesViewModel> _interfaces;
+    private object? _selectedValue;
+    private string? _searchString;
 
+    private bool _isEdited => _interfaces.Any(it => it.IsEdited);
 
-    private object selectedValue;
-    private string searchString;
-
-    protected override Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        _interfaces = _data;
-        return base.OnInitializedAsync();
+        var response = await InterfaceService.GetAllAsync();
+
+        _interfaces = _data = response.Select(it => {
+            var model = new TwinInterfacesViewModel(it);
+            model.Changed += OnChanged;
+            return model;
+        }).ToList();
+        _selectedValue = _interfaces.FirstOrDefault();
+
+        await base.OnInitializedAsync();
     }
 
     private void OnKeyPress(KeyboardEventArgs args)
@@ -61,13 +74,13 @@
 
     private bool FilterFunc(TwinInterfacesViewModel model)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
+        if (string.IsNullOrWhiteSpace(_searchString))
             return true;
-        if (model.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (model.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
             return true;
-        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+        if (model.Description.Value?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
             return true;
-        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+        if (model.Description.Value?.Contains(_searchString, StringComparison.OrdinalIgnoreCase) == true)
             return true;
         return false;
     }
@@ -75,5 +88,88 @@
     public void OnOrderClick(MouseEventArgs args)
     {
         _interfaces = _data.OrderBy(it => it.Name).ToArray();
+    }
+
+    private Task OnCreate()
+    {
+        var model = new TwinInterfacesViewModel();
+        model.Changed += OnChanged;
+        _interfaces.Add(model);
+        _selectedValue = model;
+
+        return Task.CompletedTask;
+    }
+
+    private async Task OnSave()
+    {
+        var toEdit = _interfaces.Where(x => x.IsEdited).ToArray();
+
+        if (toEdit.Any())
+        {
+            foreach (var item in toEdit)
+            {
+                item.Commit();
+            }
+
+            var toUpdate = toEdit.Where(it => !it.IsNew && !it.IsDeleted).Select(it => it.Model).ToArray();
+            if (toUpdate.Any())
+            {
+                await InterfaceService.UpdateAsync(toUpdate);
+            }
+
+            var toDelete = toEdit.Where(it => !it.IsNew && it.IsDeleted).ToArray();
+            if (toDelete.Any())
+            {
+                await InterfaceService.DeleteAsync(toDelete.Select(it => it.Model).ToArray());
+                foreach(var model in toDelete)
+                {
+                    model.Changed += OnChanged;
+                    model.Stored();
+                }
+            }
+
+            var toAdd = toEdit.Where(it => it.IsNew).ToArray();
+            if (toAdd.Any())
+            {
+                await InterfaceService.CreateAsync(toAdd.Select(it => it.Model).ToArray());
+                foreach(var model in toAdd)
+                {
+                    model.Stored();
+                }
+            }            
+        }
+    }
+
+    private Task OnUndo()
+    {
+        var edited = _interfaces.Where(x => x.IsEdited).ToArray();
+        if (edited.Any())
+        {
+            foreach (var model in edited)
+            {
+                if (model.IsNew)
+                {
+                    model.Changed -= OnChanged;
+                    _interfaces.Remove(model);
+                }
+
+                model.Reset();                
+            }         
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        foreach(var model in _interfaces)
+        {
+            model.Changed -= OnChanged;
+        }
+    }
+
+    private void OnChanged(object sender, EditableEventArgs args)
+    {
+        StateHasChanged();
     }
 }

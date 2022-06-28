@@ -6,11 +6,11 @@ public class ViewModelBase: IEditable
 {
     private readonly IDictionary<string, IEditable> _properties = new Dictionary<string, IEditable>();
 
-    public bool IsEdited => _properties.Values.Any(it => it.IsEdited);
+    public virtual bool IsEdited => _properties.Values.Any(it => it.IsEdited);
 
     public event EventHandler<EditableEventArgs> Changed;
 
-    public void Commit()
+    public virtual void Commit()
     {
         foreach (var property in _properties.Values)
         {
@@ -18,7 +18,7 @@ public class ViewModelBase: IEditable
         }
     }
 
-    public void Reset()
+    public virtual void Reset()
     {
         foreach (var property in _properties.Values)
         {
