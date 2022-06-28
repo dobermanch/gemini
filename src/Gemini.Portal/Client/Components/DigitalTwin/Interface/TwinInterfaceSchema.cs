@@ -6,7 +6,7 @@ public class TwinInterfaceSchema
 {
     public Dtmi Id { get; set; } = null!;
 
-    public ComplexTwinSchema Type { get; set; } = null!;
+    public TwinComplexSchema Type { get; set; } = null!;
 
     public string? Comment { get; set; }
 

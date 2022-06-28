@@ -16,9 +16,7 @@
 
 <MudPaper Elevation="0" Class="d-flex mt-4">
     
-    <MudPaper Elevation="0" Class="mr-4">
-        
-
+    <MudPaper Elevation="0" Class="mr-4">        
         <MudList Clickable="true" Dense="true" @bind-SelectedValue="selectedValue">
             @foreach(var model in _interfaces)
             {
@@ -36,10 +34,19 @@
 </MudPaper>
 
 @code {
-    private IList<TwinSchemaViewModel> _data = 
-        Enumerable.Range(0, 100)
-            .Select(it => new TwinSchemaViewModel())
-            .ToList();
+    private IList<TwinSchemaViewModel> _data = new []
+    {
+        new TwinSchemaViewModel(new BooleanTwinSchema()),
+        new TwinSchemaViewModel(new DateTwinSchema()),
+        new TwinSchemaViewModel(new DateTimeTwinSchema()),
+        new TwinSchemaViewModel(new DoubleTwinSchema()),
+        new TwinSchemaViewModel(new DurationTwinSchema()),
+        new TwinSchemaViewModel(new FloatTwinSchema()),
+        new TwinSchemaViewModel(new IntegerTwinSchema()),
+        new TwinSchemaViewModel(new LongTwinSchema()),
+        new TwinSchemaViewModel(new StringTwinSchema()),
+        new TwinSchemaViewModel(new TimeTwinSchema()),
+    };
 
     private IList<TwinSchemaViewModel> _interfaces;
 
@@ -64,10 +71,6 @@
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
         if (model.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase))
-            return true;
-        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
-            return true;
-        if (model.Description.Value?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
             return true;
         return false;
     }

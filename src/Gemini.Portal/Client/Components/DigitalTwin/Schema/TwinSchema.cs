@@ -3,6 +3,12 @@
 public abstract class TwinSchema
 {
     public abstract string Type { get; }
+
+    public string? Comment { get; set; }
+
+    public string? Description { get; set; }
+
+    public string? DisplayName { get; set; }
 }
 
 public class BooleanTwinSchema : TwinSchema
@@ -55,25 +61,19 @@ public class TimeTwinSchema : TwinSchema
     public override string Type => "time";
 }
 
-public abstract class ComplexTwinSchema : TwinSchema
+public abstract class TwinComplexSchema : TwinSchema
 {
-    public Dtmi? Id { get; }
-
-    public string? Comment { get; set; }
-
-    public string? Description { get; set; }
-
-    public string? DisplayName { get; set; }
+    public Dtmi? Id { get; set; }
 }
 
-public class ArrayTwinSchema : ComplexTwinSchema
+public class ArrayTwinSchema : TwinComplexSchema
 {
     public override string Type => "Array";
 
     public TwinSchema ElementSchema { get; } = null!;
 }
 
-public class EnumTwinSchema : ComplexTwinSchema
+public class EnumTwinSchema : TwinComplexSchema
 {
     public override string Type => "Enum";
 
@@ -89,7 +89,7 @@ public class EnumTwinSchema : ComplexTwinSchema
 //    public MapValue MapValue { get; } = null!;
 //}
 
-public class ObjectTwinSchema : ComplexTwinSchema
+public class ObjectTwinSchema : TwinComplexSchema
 {
     public override string Type => "Object";
 
