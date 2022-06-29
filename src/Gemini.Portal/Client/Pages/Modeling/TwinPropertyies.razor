@@ -50,9 +50,9 @@
     [Inject]
     public ITwinSchemaService SchemaService { get; set; }
 
-    private IList<TwinSchemaViewModel> _schemas;
-    private IList<TwinPropertyViewModel> _data;
-    private IList<TwinPropertyViewModel> _properties;
+    private IList<TwinSchemaViewModel> _schemas = Array.Empty<TwinSchemaViewModel>();
+    private IList<TwinPropertyViewModel> _data = Array.Empty<TwinPropertyViewModel>();
+    private IList<TwinPropertyViewModel> _properties = Array.Empty<TwinPropertyViewModel>();
     private object? _selectedValue;
     private string? _searchString;
 

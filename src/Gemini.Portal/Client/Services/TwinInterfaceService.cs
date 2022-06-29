@@ -1,4 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Interface;
+﻿using System.Net.Http.Json;
 using Gemini.Portal.Shared.Models;
 
 namespace Gemini.Portal.Client.Services;
@@ -16,30 +16,36 @@ public interface ITwinInterfaceService
 
 public class TwinInterfaceService : ITwinInterfaceService
 {
-    private readonly List<TwinInterface> _store = new List<TwinInterface>();
+    private readonly HttpClient _client;
 
-    public Task CreateAsync(IList<TwinInterface> interfaces)
+    public TwinInterfaceService(HttpClient client)
     {
-        _store.AddRange(interfaces);
-        return Task.CompletedTask;
+        _client = client;
     }
 
-    public ValueTask<IList<TwinInterface>> GetAllAsync()
+    public async Task CreateAsync(IList<TwinInterface> interfaces)
     {
-        return ValueTask.FromResult((IList<TwinInterface>)_store);
+        foreach (var model in interfaces)
+        {
+            await _client.PostAsJsonAsync("TwinInterface", model);
+        }
     }
 
-    public Task UpdateAsync(IList<TwinInterface> interfaces)
+    public async ValueTask<IList<TwinInterface>> GetAllAsync()
     {
-        return Task.CompletedTask;
+        var models = await _client.GetFromJsonAsync<TwinInterface[]>("TwinInterface");
+
+        return (IList<TwinInterface>)models;
+    }
+
+    public async Task UpdateAsync(IList<TwinInterface> interfaces)
+    {
+        await _client.PutAsJsonAsync("TwinInterface", interfaces);
     }
 
     public Task DeleteAsync(IList<TwinInterface> interfaces)
     {
-        foreach (var item in interfaces)
-        {
-            _store.Remove(item);
-        }
+        // _client.DeleteAsync();
 
         return Task.CompletedTask;
     }

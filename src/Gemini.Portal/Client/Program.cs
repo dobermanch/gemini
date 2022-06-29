@@ -11,9 +11,9 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddMudServices();
 
-builder.Services.AddSingleton<ITwinSchemaService, TwinSchemaService>();
-builder.Services.AddSingleton<ITwinInterfaceService, TwinInterfaceService>();
-builder.Services.AddSingleton<ITwinTelemetryService, TwinTelemetryService>();
-builder.Services.AddSingleton<ITwinPropertyService, TwinPropertyService>();
+builder.Services.AddScoped<ITwinSchemaService, TwinSchemaService>();
+builder.Services.AddScoped<ITwinInterfaceService, TwinInterfaceService>();
+builder.Services.AddScoped<ITwinTelemetryService, TwinTelemetryService>();
+builder.Services.AddScoped<ITwinPropertyService, TwinPropertyService>();
 
 await builder.Build().RunAsync();

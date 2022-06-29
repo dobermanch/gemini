@@ -1,14 +1,14 @@
 ﻿namespace Gemini.Portal.Shared.Models;
 
-public class TwinProperty
+public class TwinProperty: TwinModelBase
 {
-    public Iri Type => Iri.Property;
+    public string Type { get; set; } = Iri.Property;
 
     public string Name { get; set; } = null!;
 
     public TwinSchema Schema { get; set; } = null!;
 
-    public Dtmi? Id { get; set; }
+    public string Id { get; set; }
 
     public string? Comment { get; set; }
 

@@ -1,4 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Telemetry;
+﻿using System.Net.Http.Json;
 using Gemini.Portal.Shared.Models;
 
 namespace Gemini.Portal.Client.Services;
@@ -16,30 +16,36 @@ public interface ITwinTelemetryService
 
 public class TwinTelemetryService : ITwinTelemetryService
 {
-    private readonly List<TwinTelemetry> _store = new List<TwinTelemetry>();
+    private readonly HttpClient _client;
 
-    public Task CreateAsync(IList<TwinTelemetry> telemetry)
+    public TwinTelemetryService(HttpClient client)
     {
-        _store.AddRange(telemetry);
-        return Task.CompletedTask;
+        _client = client;
     }
 
-    public ValueTask<IList<TwinTelemetry>> GetAllAsync()
+    public async Task CreateAsync(IList<TwinTelemetry> telemetry)
     {
-        return ValueTask.FromResult((IList<TwinTelemetry>)_store);
+        foreach (var model in telemetry)
+        {
+            var response = await _client.PostAsJsonAsync("TwinTelemetry", model);
+        }
     }
 
-    public Task UpdateAsync(IList<TwinTelemetry> telemetry)
+    public async ValueTask<IList<TwinTelemetry>> GetAllAsync()
     {
-        return Task.CompletedTask;
+        var models = await _client.GetFromJsonAsync<TwinTelemetry[]>("TwinTelemetry");
+
+        return (IList<TwinTelemetry>)models;
+    }
+
+    public async Task UpdateAsync(IList<TwinTelemetry> telemetry)
+    {
+        await _client.PutAsJsonAsync("TwinTelemetry", telemetry);
     }
 
     public Task DeleteAsync(IList<TwinTelemetry> telemetry)
     {
-        foreach (var item in telemetry)
-        {
-            _store.Remove(item);
-        }
+       // _client.DeleteAsync();
 
         return Task.CompletedTask;
     }

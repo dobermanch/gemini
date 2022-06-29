@@ -1,5 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Interface;
-using Gemini.Portal.Client.Components.DigitalTwin.Schema;
+﻿using Gemini.Portal.Client.Components.DigitalTwin.Schema;
 using Gemini.Portal.Shared.Models;
 
 namespace Gemini.Portal.Client.Components.DigitalTwin.Property;
@@ -15,7 +14,7 @@ public class TwinPropertyViewModel : ViewModelBase
             Schema = new StringTwinSchema()
         };
 
-        RegisterProperty(nameof(Id), Model.Id, value => Model.Id = value);
+        RegisterProperty(nameof(Id), (Dtmi)Model.Id, value => Model.Id = value);
         RegisterProperty(nameof(Name), Model.Name, value => Model.Name = value);
         RegisterProperty(nameof(Schema), new TwinSchemaViewModel(Model.Schema), value => Model.Schema = value.Model);
         RegisterProperty(nameof(Comment), Model.Comment, value => Model.Comment = value);

@@ -3,11 +3,11 @@
 
 public class TwinInterface : TwinModelBase
 {
-    public Dtmi Id { get; set; } = null!;
+    public string Id { get; set; } = null!;
 
-    public override Iri Type => Iri.Interface;
+    public string Type { get; set; } = Iri.Interface;
 
-    public Iri Context { get; init; } = "dtmi:dtdl:context;2";
+    public string Context { get; init; } = "dtmi:dtdl:context;2";
 
     public string? Comment { get; set; }
 
@@ -17,7 +17,7 @@ public class TwinInterface : TwinModelBase
 
     public string? DisplayName { get; set; }
 
-    public IList<Dtmi> Extends {get;set;} = new List<Dtmi>();
+    public IList<string> Extends {get;set;} = new List<string>();
     
     public TwinSchema? Schema { get; set; }
 }

@@ -1,8 +1,8 @@
 ﻿namespace Gemini.Portal.Shared.Models;
 
-public abstract class TwinSchema
+public class TwinSchema
 {
-    public abstract string Type { get; }
+    public virtual string Type { get; set; }
 
     public string? Comment { get; set; }
 
@@ -10,6 +10,7 @@ public abstract class TwinSchema
 
     public string? DisplayName { get; set; }
 }
+
 
 public class BooleanTwinSchema : TwinSchema
 {

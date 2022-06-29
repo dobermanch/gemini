@@ -1,4 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Property;
+﻿using System.Net.Http.Json;
 using Gemini.Portal.Shared.Models;
 
 namespace Gemini.Portal.Client.Services;
@@ -16,30 +16,36 @@ public interface ITwinPropertyService
 
 public class TwinPropertyService : ITwinPropertyService
 {
-    private readonly List<TwinProperty> _store = new List<TwinProperty>();
+    private readonly HttpClient _client;
 
-    public Task CreateAsync(IList<TwinProperty> properties)
+    public TwinPropertyService(HttpClient client)
     {
-        _store.AddRange(properties);
-        return Task.CompletedTask;
+        _client = client;
     }
 
-    public ValueTask<IList<TwinProperty>> GetAllAsync()
+    public async Task CreateAsync(IList<TwinProperty> properties)
     {
-        return ValueTask.FromResult((IList<TwinProperty>)_store);
+        foreach (var model in properties)
+        {
+            await _client.PostAsJsonAsync("TwinProperty", model);
+        }
     }
 
-    public Task UpdateAsync(IList<TwinProperty> properties)
+    public async ValueTask<IList<TwinProperty>> GetAllAsync()
     {
-        return Task.CompletedTask;
+        var models = await _client.GetFromJsonAsync<TwinProperty[]>("TwinProperty");
+
+        return (IList<TwinProperty>)models;
+    }
+
+    public async Task UpdateAsync(IList<TwinProperty> properties)
+    {
+        await _client.PutAsJsonAsync("TwinProperty", properties);
     }
 
     public Task DeleteAsync(IList<TwinProperty> properties)
     {
-        foreach (var item in properties)
-        {
-            _store.Remove(item);
-        }
+        // _client.DeleteAsync();
 
         return Task.CompletedTask;
     }

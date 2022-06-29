@@ -1,5 +1,4 @@
-﻿using Gemini.Portal.Client.Components.DigitalTwin.Schema;
-using Gemini.Portal.Shared.Models;
+﻿using Gemini.Portal.Shared.Models;
 
 namespace Gemini.Portal.Client.Components.DigitalTwin.Interface;
 
@@ -13,7 +12,7 @@ public class TwinInterfacesViewModel : ViewModelBase
             Id = "dtmi:;1",
         };
 
-        RegisterProperty(nameof(Id), Model.Id, value => Model.Id = value);
+        RegisterProperty(nameof(Id), (Dtmi)Model.Id, value => Model.Id = value);
         RegisterProperty(nameof(Comment), Model.Comment, value => Model.Comment = value);
         RegisterProperty(nameof(Contents), Model.Contents, value => Model.Contents = value);
         RegisterProperty(nameof(Description), Model.Description, value => Model.Description = value);
@@ -44,7 +43,7 @@ public class TwinInterfacesViewModel : ViewModelBase
 
     public EditableProperty<string?> DisplayName => GetProperty<string?>();
 
-    public EditableProperty<IList<Dtmi>> Extends => GetProperty<IList<Dtmi>>();
+    public EditableProperty<IList<string>> Extends => GetProperty<IList<string>>();
 
     public EditableProperty<TwinSchema?> Schema => GetProperty<TwinSchema?>();
 

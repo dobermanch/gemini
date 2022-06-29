@@ -1,4 +1,5 @@
-﻿@implements IDisposable
+﻿@using Gemini.Portal.Client.Components.DigitalTwin.Schema
+@implements IDisposable
 
 <MudPaper Elevation="0">
 
@@ -22,12 +23,26 @@
         <MudTextField T="string" @bind-Value="@Model.Description.Value" Label="Description" Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="A localizable description for display" Lines="5" Class="mb-4" />
 
         <MudTextField T="string" @bind-Value="@Model.Comment.Value" Label="Comment" Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="A comment for model authors" Lines="5" Class="mb-4" />
+
+        <MudAutocomplete T="TwinSchemaViewModel" Label="Schema" @bind-Value="@Model.Schema.Value" ToStringFunc="@(it => it.Name)" SearchFunc="@Search" Margin="Margin.Dense" Dense="true" Variant="Variant.Outlined" />
     }
 </MudPaper>
 
 @code {
     [Parameter]
     public TwinTelemetryViewModel? Model { get; set; }
+
+    [Parameter]
+    public IList<TwinSchemaViewModel> Schemas { get; set; } = null!;
+
+
+    private async Task<IEnumerable<TwinSchemaViewModel>> Search(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return Schemas.ToArray();
+
+        return Schemas.Where(x => x.Name.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
 
     protected override void OnInitialized()
     {

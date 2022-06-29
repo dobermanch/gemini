@@ -1,14 +1,14 @@
 ﻿namespace Gemini.Portal.Shared.Models;
 
-public class TwinTelemetry
+public class TwinTelemetry: TwinModelBase
 {
-    public Iri Type => Iri.Telemetry;
+    public string Id { get; set; }
+
+    public string Type { get; set; } = Iri.Telemetry;
 
     public string Name { get; set; } = null!;
 
     public TwinSchema Schema { get; set; } = null!;
-
-    public Dtmi? Id { get; set; }
 
     public string? Comment { get; set; }
 

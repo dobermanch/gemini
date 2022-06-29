@@ -17,15 +17,18 @@
 
 <MudPaper Elevation="0" Class="d-flex mt-4">
     
-    <MudPaper Elevation="0" Class="mr-4">        
-        <MudList Clickable="true" Dense="true" @bind-SelectedValue="selectedValue">
-            @foreach(var model in _interfaces)
-            {
-                <MudListItem Value="@model">
-                    <TwinSchemaPane Model="@model" />
-                </MudListItem>
-            }            
-        </MudList>
+    <MudPaper Elevation="0" Class="mr-4"> 
+        @if (_interfaces.Any())
+        {
+            <MudList Clickable="true" Dense="true" @bind-SelectedValue="selectedValue">
+                @foreach (var model in _interfaces)
+                {
+                    <MudListItem Value="@model">
+                        <TwinSchemaPane Model="@model"/>
+                    </MudListItem>
+                }
+            </MudList>
+        }
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
@@ -38,8 +41,8 @@
     [Inject]
     public ITwinSchemaService SchemaService { get; set; }
 
-    private IList<TwinSchemaViewModel> _data;
-    private IList<TwinSchemaViewModel> _interfaces;
+    private IList<TwinSchemaViewModel> _data = Array.Empty<TwinSchemaViewModel>();
+    private IList<TwinSchemaViewModel> _interfaces = Array.Empty<TwinSchemaViewModel>();
 
 
     private object selectedValue;

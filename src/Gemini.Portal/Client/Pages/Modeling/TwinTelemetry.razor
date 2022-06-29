@@ -39,7 +39,7 @@
     </MudPaper>
 
     <MudPaper Elevation="3" Width="600px" Class="pa-4">
-        <TwinTelemetryEditor Model="@((TwinTelemetryViewModel)_selectedValue)" />
+        <TwinTelemetryEditor Model="@((TwinTelemetryViewModel)_selectedValue)"  Schemas="@_schemas" />
     </MudPaper>
 
 </MudPaper>
@@ -50,9 +50,9 @@
     [Inject]
     public ITwinSchemaService SchemaService { get; set; }
 
-    private IList<TwinSchemaViewModel> _schemas;
-    private IList<TwinTelemetryViewModel> _data;
-    private IList<TwinTelemetryViewModel> _telemetry;
+    private IList<TwinSchemaViewModel> _schemas = Array.Empty<TwinSchemaViewModel>();
+    private IList<TwinTelemetryViewModel> _data= Array.Empty<TwinTelemetryViewModel>();
+    private IList<TwinTelemetryViewModel> _telemetry = Array.Empty<TwinTelemetryViewModel>();
     private object? _selectedValue;
     private string? _searchString;
 

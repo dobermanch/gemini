@@ -4,7 +4,7 @@ namespace Gemini.Portal.Shared.Models;
 
 public abstract class TwinModelBase
 {
-    public abstract Iri Type { get; }
+  //  public abstract string Type { get; }
 }
 
 
@@ -24,13 +24,7 @@ public class Iri : Dictionary<string, string>
 
     public static readonly Iri Relationship = "Relationship";
 
-    public string Value { get; init; } = null!;
-
-    public string GetValue()
-    {
-        TryGetValue(CultureInfo.CurrentCulture.TwoLetterISOLanguageName, out var value);
-        return value ?? string.Empty;
-    }
+    public string Value { get; set; } = null!;
 
     public static implicit operator string(Iri iri) => iri.Value;
 
@@ -42,6 +36,11 @@ public class Dtmi : IEquatable<Dtmi>
     private const string SchemaDelimeter = ":";
     private const string SegmentDelimeter = ":";
     private const string VersionDelimeter = ";";
+
+    public Dtmi()
+    {
+        
+    }
 
     public Dtmi(string path, string version = "1")
         : this("dtmi", path, version) { }

@@ -45,8 +45,8 @@
     [Inject]
     public ITwinInterfaceService InterfaceService { get; set; }
 
-    private IList<TwinInterfacesViewModel> _data;
-    private IList<TwinInterfacesViewModel> _interfaces;
+    private IList<TwinInterfacesViewModel> _data = Array.Empty<TwinInterfacesViewModel>();
+    private IList<TwinInterfacesViewModel> _interfaces = Array.Empty<TwinInterfacesViewModel>();
     private object? _selectedValue;
     private string? _searchString;
 
